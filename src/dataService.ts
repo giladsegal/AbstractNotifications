@@ -14,6 +14,20 @@ export class DataService {
     return this.abstract.projects.list();
   };
 
+  getAllCommits = ({
+    projectId,
+    branchId
+  }: Abstract.CommitDescriptor): Promise<Abstract.Commit[]> => {
+    return this.abstract.commits.list({
+      projectId,
+      branchId
+    });
+  };
+
+  getAllOrganizations = (): Promise<Abstract.Organization[]> => {
+    return this.abstract.organizations.list();
+  };
+
   getProject = (
     projects: Abstract.Project[],
     {name}: {name: string}
@@ -26,16 +40,6 @@ export class DataService {
     branchId
   }: Abstract.BranchDescriptor): Promise<Abstract.Branch> => {
     return this.abstract.branches.info({
-      projectId,
-      branchId
-    });
-  };
-
-  getAllCommits = ({
-    projectId,
-    branchId
-  }: Abstract.CommitDescriptor): Promise<Abstract.Commit[]> => {
-    return this.abstract.commits.list({
       projectId,
       branchId
     });

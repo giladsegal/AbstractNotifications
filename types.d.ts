@@ -27,6 +27,10 @@ declare module 'abstract-sdk' {
       projects: {
         list: (descriptor?: string) => Promise<Project[]>;
       };
+
+      organizations: {
+        list: () => Promise<Organization[]>;
+      };
     };
 
     export type Branch = {
@@ -118,6 +122,20 @@ declare module 'abstract-sdk' {
       projectId: string;
       branchId: string | 'master';
       sha?: string;
+    };
+
+    export type Organization = {
+      createdAt: string;
+      hasBillingInfo: boolean;
+      id: string;
+      isUsernameOrganization: boolean;
+      isWithinSubscriptionTerm: boolean;
+      logoUrl: string;
+      name: string;
+      restrictedToDomains: string[];
+      trialEndsAt: string;
+      updatedAt: string;
+      userId: string;
     };
   }
 
