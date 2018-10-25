@@ -5,8 +5,8 @@ export class AbstractFeedTree {
   private abstractFeedTree: vscode.TreeView<Entry>;
 
   constructor(context: vscode.ExtensionContext, accessToken: string) {
-    const treeDataProvider = new FeedProvider(context);
-    this.abstractFeedTree = vscode.window.createTreeView('abstractExplorer', {
+    const treeDataProvider = new FeedProvider(context, accessToken);
+    this.abstractFeedTree = vscode.window.createTreeView('abstractFeed', {
       treeDataProvider
     });
 
