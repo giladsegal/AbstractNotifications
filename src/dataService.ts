@@ -39,18 +39,31 @@ export class DataService {
     });
   }
 
-  getAllProjects() {
+  getAllProjects = () => {
     return this.abstract.projects.list();
   }
 
-  getProject(projects: any[], {name}: {name: string}) {
+  getProject = (projects: any[], {name}: {name: string}) => {
     return projects.find(project => project.name === name);
   }
 
-  getBranch({projectId, branchId}: {projectId: string, branchId: string}) {
+  getBranch = ({projectId, branchId}: {projectId: string, branchId: string}) => {
     return this.abstract.branches.info({
       projectId,
       branchId
     });
   }
+
+  getCommits = ({projectId, branchId}: {projectId: string, branchId: string}) => {
+    return this.abstract.commits.list({
+      projectId,
+      branchId
+    });
+  }
 }
+
+
+//   const commits = await dataService.getBranch({
+//     projectId: project.id,
+//     branchId: 'master'
+//   });
