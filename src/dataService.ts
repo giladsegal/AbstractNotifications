@@ -31,7 +31,7 @@ export class DataService {
     });
   };
 
-  getCommits = ({
+  getAllCommits = ({
     projectId,
     branchId
   }: Abstract.CommitDescriptor): Promise<Abstract.Commit[]> => {
