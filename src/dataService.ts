@@ -12,7 +12,7 @@ export class DataService {
 
   getAllProjects = (): Promise<Abstract.Project[]> => {
     return this.abstract.projects.list();
-  }
+  };
 
   getAllCommits = ({
     projectId,
@@ -22,18 +22,18 @@ export class DataService {
       projectId,
       branchId
     });
-  }
+  };
 
   getAllOrganizations = (): Promise<Abstract.Organization[]> => {
     return this.abstract.organizations.list();
-  }
+  };
 
   getProject = (
     projects: Abstract.Project[],
     {name}: {name: string}
   ): Abstract.Project | undefined => {
     return projects.find(project => project.name === name);
-  }
+  };
 
   getBranch = ({
     projectId,
@@ -43,5 +43,11 @@ export class DataService {
       projectId,
       branchId
     });
-  }
+  };
+
+  getCommitUrl = (commit: Abstract.Commit) => {
+    return `https://app.goabstract.com/projects/${
+      commit.projectId
+    }/branches/master/commits/${commit.sha}`;
+  };
 }
