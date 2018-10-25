@@ -1,16 +1,13 @@
 import * as Abstract from 'abstract-sdk';
 
 export class DataService {
-  constructor(private readonly abstract: Abstract.AbstractClient) {
-    const accessToken =
-      '5c444fc40c2a5124a7aab5fcba89dfd7536ce7072cc05e973d8eeedbbc08620b';
+  abstract: Abstract.AbstractClient;
 
-    this.abstract =
-      abstract ||
-      Abstract.Client({
-        accessToken,
-        transport: Abstract.TRANSPORTS.API
-      });
+  constructor(accessToken: string) {
+    this.abstract = Abstract.Client({
+      accessToken,
+      transport: Abstract.TRANSPORTS.API
+    });
   }
 
   getAllProjects = (): Promise<Abstract.Project[]> => {
