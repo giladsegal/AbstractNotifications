@@ -9,6 +9,26 @@ declare module 'abstract-sdk' {
       transport: TRANSPORTS;
     }): any;
 
+    export type AbstractClient = {
+      branches: {
+        list: (
+          description: ProjectDescriptor,
+          filter: {filter?: 'active' | 'archived' | 'mine'}
+        ) => Promise<Branch[]>;
+
+        info: (descripiton: BranchDescriptor) => Promise<Branch>;
+      };
+
+      commits: {
+        list: (descriptor: BranchDescriptor) => Promise<Commit[]>;
+        info(descriptor: CommitDescriptor): Promise<Commit>;
+      };
+
+      projects: {
+        list: (descriptor?: string) => Promise<Project[]>;
+      };
+    };
+
     export type Branch = {
       createdAt: string;
       description: string;

@@ -1,7 +1,7 @@
 import * as Abstract from 'abstract-sdk';
 
 export class DataService {
-  constructor(private readonly abstract: any) {
+  constructor(private readonly abstract: Abstract.AbstractClient) {
     const accessToken =
       '5c444fc40c2a5124a7aab5fcba89dfd7536ce7072cc05e973d8eeedbbc08620b';
 
@@ -13,7 +13,7 @@ export class DataService {
       });
   }
 
-  getAllProjects = (): Abstract.Project[] => {
+  getAllProjects = (): Promise<Abstract.Project[]> => {
     return this.abstract.projects.list();
   };
 
@@ -27,7 +27,7 @@ export class DataService {
   getBranch = ({
     projectId,
     branchId
-  }: Abstract.BranchDescriptor): Abstract.Branch => {
+  }: Abstract.BranchDescriptor): Promise<Abstract.Branch> => {
     return this.abstract.branches.info({
       projectId,
       branchId
@@ -37,7 +37,7 @@ export class DataService {
   getCommits = ({
     projectId,
     branchId
-  }: Abstract.CommitDescriptor): Abstract.Commit[] => {
+  }: Abstract.CommitDescriptor): Promise<Abstract.Commit[]> => {
     return this.abstract.commits.list({
       projectId,
       branchId
