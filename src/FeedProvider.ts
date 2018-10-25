@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import {DataService} from './dataService';
+import {Timer} from './Timer';
 // import {CommitType as AbstractCommitType} from 'abstract-sdk';
 
 export interface Entry {
@@ -14,12 +15,20 @@ export interface Entry {
 export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   extensionPath: string;
   dataService: DataService;
+
+  timer: Timer;
+
+  private _onDidChangeTreeData: vscode.EventEmitter<
+    Entry
+  > = new vscode.EventEmitter<Entry>();
+  readonly onDidChangeTreeData: vscode.Event<Entry> = this._onDidChangeTreeData
+    .event;
+
   constructor(context: vscode.ExtensionContext, accessToken: string) {
     this.extensionPath = context.extensionPath;
     this.dataService = new DataService(accessToken);
   }
 
-  onDidChangeTreeData?: vscode.Event<Entry | null | undefined> | undefined;
   getTreeItem(element: Entry): vscode.TreeItem {
     const treeItem = new vscode.TreeItem(
       element.uri || (element.title as any),
@@ -86,5 +95,12 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
     }
 
     return [];
+  }
+
+  beginUpdating(): void {
+    // throw new Error("Method not implemented.");
+  }
+  stopUpdating(): any {
+    // throw new Error("Method not implemented.");
   }
 }
