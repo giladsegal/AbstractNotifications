@@ -23,28 +23,21 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   getTreeItem(element: Entry): vscode.TreeItem {
     const treeItem = new vscode.TreeItem(
       element.uri || (element.title as any),
-      element.type === 'commit'
-        ? vscode.TreeItemCollapsibleState.None
-        : vscode.TreeItemCollapsibleState.Collapsed
+      vscode.TreeItemCollapsibleState.Collapsed
     );
     treeItem.label = element.title;
     treeItem.iconPath = vscode.Uri.file(
       path.join(this.extensionPath, 'resources', element.type + '.svg')
     );
 
-    if (element.type === 'layer') {
+    if (element.type === 'merge') {
+      treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
       // opens layer in inspect mode in browser
       treeItem.command = {
         command: 'vscode.open',
         title: 'Open',
         arguments: [
-          vscode.Uri.parse(
-            `https://app.goabstract.com/projects/${
-              element.obj.projectId
-            }/branches/${element.obj.branchId}/commits/${
-              element.obj.lastChangedAtSha
-            }/files/${element.obj.fileId}/layers/${element.id}?mode=build`
-          )
+          vscode.Uri.parse(this.dataService.getCommitUrl(element.obj))
         ]
       };
     }
@@ -84,14 +77,10 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
 
       return commits.filter(commit => commit.type === 'MERGE').map(commit => {
         return {
-          type: 'commit',
+          type: 'merge',
           id: commit.sha,
           title: commit.title,
-          command: {
-            command: 'vscode.open',
-            title: 'Open',
-            arguments: [vscode.Uri.parse(this.dataService.getCommitUrl(commit))]
-          }
+          obj: commit
         };
       });
     }
