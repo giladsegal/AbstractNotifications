@@ -7,7 +7,7 @@ declare module 'abstract-sdk' {
     export function Client(params: {
       accessToken: string;
       transport: TRANSPORTS;
-    }): any;
+    }): AbstractClient;
 
     export type AbstractClient = {
       branches: {

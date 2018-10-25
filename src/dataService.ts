@@ -44,8 +44,3 @@ export class DataService {
     });
   };
 }
-
-//   const commits = await dataService.getBranch({
-//     projectId: project.id,
-//     branchId: 'master'
-//   });
