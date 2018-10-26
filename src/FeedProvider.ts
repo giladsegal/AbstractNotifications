@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import {DataService} from './dataService';
 import {Timer} from './Timer';
-// import {CommitType as AbstractCommitType} from 'abstract-sdk';
+import {Organization, Project, Commit} from 'abstract-sdk';
 
 export interface Entry {
   uri?: vscode.Uri;
@@ -12,11 +12,16 @@ export interface Entry {
   obj?: any;
 }
 
+export interface TreeData {
+  organizations: Entry[];
+  projects: Entry[];
+}
+
 export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   extensionPath: string;
   dataService: DataService;
 
-  timer?: Timer = undefined;
+  timer = new Timer(10000);
 
   private _onDidChangeTreeData: vscode.EventEmitter<
     Entry
@@ -60,47 +65,64 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   ): Promise<Entry[]> {
     if (!element) {
       const organizations = await this.dataService.getAllOrganizations();
-
-      return organizations.map<Entry>(org => ({
-        uri: vscode.Uri.parse('abstract://org/' + org.id),
-        id: org.id,
-        title: org.name,
-        type: 'organization',
-        obj: org
-      }));
+      return organizations.map(this.oraganizationToEntry);
     } else if (element.type === 'organization') {
       const projects = await this.dataService.getAllProjects();
-
-      return projects.map(project => ({
-        uri: vscode.Uri.parse('abstract://project/' + project.id),
-        id: project.id,
-        title: project.name,
-        type: 'project',
-        obj: project
-      }));
+      return projects.map(this.projectToEntry);
     } else if (element.type === 'project') {
       const commits = await this.dataService.getAllCommits({
         projectId: element.id,
         branchId: 'master'
       });
-
-      return commits.filter(commit => commit.type === 'MERGE').map(commit => {
-        return {
-          type: 'merge',
-          id: commit.sha,
-          title: commit.title,
-          obj: commit
-        };
-      });
+      return commits
+        .filter(commit => commit.type === 'MERGE')
+        .map(this.commitToEntry);
     }
 
     return [];
   }
 
   beginUpdating(): void {
-    // throw new Error("Method not implemented.");
+    // createa timer that
+    // 1. saves object with entry arrays in the following format
+    // { organizations,  projects, commits}
+    // 2. deep compare new object to last object (using some library)
+    // 3. update tree if needed
   }
-  stopUpdating(): any {
-    // throw new Error("Method not implemented.");
+  stopUpdating(): void {
+    this.timer.stop();
   }
+
+  private getTreeData = async (): Promise<TreeData> => {
+    const organizations = await this.dataService.getAllOrganizations();
+    const projects = await this.dataService.getAllProjects();
+
+    return {
+      organizations: organizations.map(this.oraganizationToEntry),
+      projects: projects.map(this.projectToEntry)
+    };
+  };
+
+  private oraganizationToEntry = (organization: Organization): Entry => ({
+    uri: vscode.Uri.parse('abstract://org/' + organization.id),
+    id: organization.id,
+    title: organization.name,
+    type: 'organization',
+    obj: organization
+  });
+
+  private projectToEntry = (project: Project): Entry => ({
+    uri: vscode.Uri.parse('abstract://project/' + project.id),
+    id: project.id,
+    title: project.name,
+    type: 'project',
+    obj: project
+  });
+
+  private commitToEntry = (commit: Commit): Entry => ({
+    type: 'merge',
+    id: commit.sha,
+    title: commit.title,
+    obj: commit
+  });
 }
