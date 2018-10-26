@@ -7,7 +7,7 @@ export function showAbstractFeedTree(
 ) {
   const treeDataProvider = new FeedProvider(context, accessToken);
 
-  vscode.window.createTreeView('abstractFeed', {
+  vscode.window.createTreeView('notiFeed', {
     treeDataProvider
   });
 

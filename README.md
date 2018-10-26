@@ -1,65 +1,33 @@
-# abstract-notifications README
+# NOTIFEED (Beta)
 
-This is the README for your extension "abstract-notifications". After writing up a brief description, we recommend including the following sections.
+View Abstract's commit log get notified of new commits as they arrive, without leaving your IDE!
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- A sidebar that display all the commits to your Abstract project master branch.
+- Click on a commit to view it in Abstract web.
+- Your UX/UI designer changed the design you're working on? No problerm! You will be notified immediatly 😎.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+1. An access token to Abstract is required. Get it from [here](https://app.goabstract.com/account/tokens)
+1. Make sure you're invited to your designer's Abstract Project.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+This extension is in beta and so does Abstract's SDK, **EXPECT THINGS TO BREAK**.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+This plugin is the result of [Design Tools Hackathon 2018](https://www.designtoolstlv.com/).
+Powered by [Abstract SDK](https://sdk.goabstract.com/).
 
-### 1.0.0
+### 0.1.0
 
-Initial release of ...
+Initial release:
 
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+- View all of your organization's project's commits.
+- Click on a commit to open it in Abstract Web.
+- A notification will pop every time a commit was added to master.
 
 **Enjoy!**

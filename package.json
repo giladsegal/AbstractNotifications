@@ -2,8 +2,12 @@
   "name": "abstract-notifications",
   "displayName": "Abstract Notifications",
   "description": "Get notified of changes your designer committed to abstract inside VSCode",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "yakirn",
+  "repository": {
+    "type" : "git",
+    "url": "https://github.com/giladsegal/AbstractNotifications.git"
+  },
   "engines": {
     "vscode": "^1.28.0"
   },
@@ -17,32 +21,33 @@
   "contributes": {
     "commands": [
       {
-        "command": "abstract-notifications.saveAccessToken",
-        "title": "Abstract Notifications: save access token"
+        "command": "notifeed.saveAccessToken",
+        "title": "NotiFeed Abstract: save access token"
       },
       {
-        "command": "abstract-notifications.deleteAccessToken",
-        "title": "Abstract Notifications: delete access token"
+        "command": "notifeed.deleteAccessToken",
+        "title": "NotiFeed Abstract: delete access token"
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "abstractNotificationsActivity",
-          "title": "Abstract",
-          "icon": "resources/abstract.svg"
+          "id": "notiFeed",
+          "title": "NotiFeed",
+          "icon": "resources/sidebar_icon.svg"
         }
       ]
     },
     "views": {
-      "abstractNotificationsActivity": [
+      "notiFeed": [
         {
-          "id": "abstractFeed",
+          "id": "notiFeed",
           "name": "Feed"
         }
       ]
     }
   },
+  "icon": "resources/marketplace_icon.png",
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",

@@ -23,7 +23,7 @@ export function registerCommands(
   }
 
   const commandDisposer1 = registerCommand(
-    'abstract-notifications.saveAccessToken',
+    'notifeed.saveAccessToken',
     async () => {
       const accessToken = await showAccessTokenInputBox();
 
@@ -35,7 +35,7 @@ export function registerCommands(
   );
 
   const commandDisposer2 = registerCommand(
-    'abstract-notifications.deleteAccessToken',
+    'notifeed.deleteAccessToken',
     async () => {
       await globalState.setAccessToken(undefined);
       showTokenDeletedMessage();
