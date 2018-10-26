@@ -27,7 +27,7 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   extensionPath: string;
   dataService: DataService;
 
-  timer = new Timer(10000);
+  timer = new Timer(5000);
   currentTreeData?: TreeData;
 
   private _onDidChangeTreeData: vscode.EventEmitter<
