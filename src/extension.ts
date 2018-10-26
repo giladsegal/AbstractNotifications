@@ -4,10 +4,13 @@
 import * as vscode from 'vscode';
 import {showAbstractFeedTree} from './AbstractFeedTree';
 import {FeedProvider} from './FeedProvider';
-
-const ABSTRACT_API_KEY = 'abstractApi';
+import {registerCommands} from './commands';
+import {GlobalStateManager} from './globalState';
+import {showAccessTokenInputBox, showMissingTokenError} from './messages';
 
 let treeDataProvider: FeedProvider;
+let disposables: vscode.Disposable[] = [];
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -27,35 +30,33 @@ export async function activate(context: vscode.ExtensionContext) {
   // });
 
   // retrieve existing api key
-  let abstractApi = context.globalState.get<string>(ABSTRACT_API_KEY);
+  let globalState = GlobalStateManager(context.globalState);
 
-  if (!abstractApi) {
+  disposables = registerCommands(vscode.commands.registerCommand, globalState);
+
+  let accessToken = globalState.getAccessToken();
+
+  if (!accessToken) {
     // request user to enter his API key
-    const abstractApi = await vscode.window.showInputBox({
-      prompt: 'Enter API token',
-      ignoreFocusOut: true,
-      password: true,
-      placeHolder: 'Your API token...'
-    });
+    accessToken = await showAccessTokenInputBox();
 
     // user canceled the input box
-    if (!abstractApi) {
-      vscode.window.showErrorMessage(
-        'Cannot use Abstract Notifications without an API token'
-      );
-      return;
+    if (accessToken) {
+      await globalState.setAccessToken(accessToken);
       // save the user input into the global state
     } else {
-      context.globalState.update(ABSTRACT_API_KEY, abstractApi);
+      showMissingTokenError();
+      return;
     }
   }
 
-  treeDataProvider = showAbstractFeedTree(context, abstractApi!);
+  treeDataProvider = showAbstractFeedTree(context, accessToken!);
   treeDataProvider.beginUpdating();
   // context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-    treeDataProvider.stopUpdating();
+  treeDataProvider.stopUpdating();
+  disposables.forEach(disposable => disposable.dispose());
 }

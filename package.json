@@ -11,11 +11,18 @@
     "Other"
   ],
   "activationEvents": [
-    "onView:abstractFeed"
+    "*"
   ],
   "main": "./out/extension",
   "contributes": {
-    "commands": [],
+    "commands": [{
+      "command": "abstract-notifications.saveAccessToken",
+      "title": "Abstract Notifications: save access token"
+    },
+    {
+      "command": "abstract-notifications.deleteAccessToken",
+      "title": "Abstract Notifications: delete access token"
+    }],
     "viewsContainers": {
       "activitybar": [
         {

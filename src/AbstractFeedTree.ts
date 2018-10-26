@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import {FeedProvider, Entry} from './FeedProvider';
+import {FeedProvider} from './FeedProvider';
 
 export function showAbstractFeedTree(
   context: vscode.ExtensionContext,
