@@ -1,6 +1,6 @@
 export class Timer {
-  isRunning = false;
-  intervalHandle?: NodeJS.Timer;
+  private isRunning = false;
+  private intervalHandle?: NodeJS.Timer;
 
   constructor(private readonly duration: number) {}
 
@@ -9,7 +9,7 @@ export class Timer {
     this.intervalHandle && clearInterval(this.intervalHandle);
   };
 
-  run = (task: <T>() => Promise<T>) => {
+  run = (task: () => Promise<void>) => {
     if (this.isRunning) {
       this.stop();
     }

@@ -3,6 +3,7 @@ import * as path from 'path';
 import {DataService} from './dataService';
 import {Timer} from './Timer';
 import {Organization, Project, Commit} from 'abstract-sdk';
+import deepEqual = require('deep-equal');
 
 export interface Entry {
   uri?: vscode.Uri;
@@ -15,6 +16,7 @@ export interface Entry {
 export interface TreeData {
   organizations: Entry[];
   projects: Entry[];
+  commits: Entry[];
 }
 
 export class FeedProvider implements vscode.TreeDataProvider<Entry> {
@@ -22,6 +24,7 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   dataService: DataService;
 
   timer = new Timer(10000);
+  currentTreeData?: TreeData;
 
   private _onDidChangeTreeData: vscode.EventEmitter<
     Entry
@@ -83,11 +86,14 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   }
 
   beginUpdating(): void {
-    // createa timer that
-    // 1. saves object with entry arrays in the following format
-    // { organizations,  projects, commits}
-    // 2. deep compare new object to last object (using some library)
-    // 3. update tree if needed
+    this.timer.run(async () => {
+      const newTreeData = await this.getTreeData();
+
+      if (!deepEqual(this.currentTreeData, newTreeData, {strict: true})) {
+        this.currentTreeData = newTreeData;
+        this._onDidChangeTreeData.fire();
+      }
+    });
   }
   stopUpdating(): void {
     this.timer.stop();
@@ -96,10 +102,23 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   private getTreeData = async (): Promise<TreeData> => {
     const organizations = await this.dataService.getAllOrganizations();
     const projects = await this.dataService.getAllProjects();
+    const commitsPerProject = await Promise.all(
+      projects
+        .map(p => p.id)
+        .map(pid =>
+          this.dataService.getAllCommits({projectId: pid, branchId: 'master'})
+        )
+    );
+    const allCommits: Commit[] = Array.prototype.concat.apply(
+      [],
+      commitsPerProject
+    );
+    const commits = allCommits.filter(commit => commit.type === 'MERGE');
 
     return {
       organizations: organizations.map(this.oraganizationToEntry),
-      projects: projects.map(this.projectToEntry)
+      projects: projects.map(this.projectToEntry),
+      commits: commits.map(this.commitToEntry)
     };
   };
 

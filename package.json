@@ -15,14 +15,16 @@
   ],
   "main": "./out/extension",
   "contributes": {
-    "commands": [{
-      "command": "abstract-notifications.saveAccessToken",
-      "title": "Abstract Notifications: save access token"
-    },
-    {
-      "command": "abstract-notifications.deleteAccessToken",
-      "title": "Abstract Notifications: delete access token"
-    }],
+    "commands": [
+      {
+        "command": "abstract-notifications.saveAccessToken",
+        "title": "Abstract Notifications: save access token"
+      },
+      {
+        "command": "abstract-notifications.deleteAccessToken",
+        "title": "Abstract Notifications: delete access token"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
@@ -49,14 +51,16 @@
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
-    "typescript": "^2.6.1",
-    "vscode": "^1.1.21",
-    "tslint": "^5.8.0",
+    "@types/deep-equal": "^1.0.1",
+    "@types/mocha": "^2.2.42",
     "@types/node": "^8.10.25",
-    "@types/mocha": "^2.2.42"
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.1",
+    "vscode": "^1.1.21"
   },
   "dependencies": {
-    "abstract-sdk": "^0.3.2"
+    "abstract-sdk": "^0.3.2",
+    "deep-equal": "^1.0.1"
   },
   "prettier": {
     "bracketSpacing": false,
