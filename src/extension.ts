@@ -57,8 +57,8 @@ export async function activate(context: vscode.ExtensionContext) {
   treeDataProvider = showAbstractFeedTree(context, accessToken!);
   treeDataProvider.beginUpdating();
 
-  treeDataProvider.onProjectChanged(({projectName}) => {
-    showProjectChangedWarning(projectName);
+  treeDataProvider.onProjectChanged(({title}) => {
+    showProjectChangedWarning(title);
   });
   // context.subscriptions.push(disposable);
 }

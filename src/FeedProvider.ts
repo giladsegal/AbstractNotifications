@@ -19,16 +19,13 @@ export interface TreeData {
   commits: Entry[];
 }
 
-export interface ProjectChange {
-  projectName: string;
-}
-
 export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   extensionPath: string;
   dataService: DataService;
 
   timer = new Timer(10000);
   currentTreeData?: TreeData;
+  unreadProjectUpdates: string[] = [];
 
   private _onDidChangeTreeData: vscode.EventEmitter<
     Entry
@@ -37,8 +34,8 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
     .event;
 
   private _onProjectChanged: vscode.EventEmitter<
-    ProjectChange
-  > = new vscode.EventEmitter<ProjectChange>();
+    Entry
+  > = new vscode.EventEmitter<Entry>();
   onProjectChanged = this._onProjectChanged.event;
 
   constructor(context: vscode.ExtensionContext, accessToken: string) {
@@ -55,8 +52,12 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
     treeItem.iconPath = vscode.Uri.file(
       path.join(this.extensionPath, 'resources', element.type + '.svg')
     );
-
-    if (element.type === 'merge') {
+    if (
+      element.type === 'project' &&
+      this.unreadProjectUpdates.some(p => p === element.id)
+    ) {
+      treeItem.label = `${element.title} (*)`;
+    } else if (element.type === 'merge') {
       treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
       // opens layer in inspect mode in browser
       treeItem.command = {
@@ -81,6 +82,11 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
     } else if (element.type === 'organization') {
       return this.currentTreeData.projects;
     } else if (element.type === 'project') {
+      const updatedIdx = this.unreadProjectUpdates.findIndex(
+        x => x === element.id
+      );
+      updatedIdx !== -1 && this.unreadProjectUpdates.splice(updatedIdx, 1);
+
       return this.currentTreeData.commits.filter(
         commit => commit.obj.projectId === element.id
       );
@@ -116,12 +122,13 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
           console.log(`${currentProjectsWithChanges.length} projects changed!`);
 
           currentProjectsWithChanges.forEach(p => {
-            this._onProjectChanged.fire({projectName: p.title});
+            this.unreadProjectUpdates.push(p.id);
+            this._onProjectChanged.fire(p);
+            this._onDidChangeTreeData.fire(p);
           });
         }
 
         this.currentTreeData = newTreeData;
-        this._onDidChangeTreeData.fire();
       }
       console.log('going to sleep...');
     });
