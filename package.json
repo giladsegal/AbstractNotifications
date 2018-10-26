@@ -1,7 +1,7 @@
 {
-  "name": "abstract-notifications",
-  "displayName": "Abstract Notifications",
-  "description": "Get notified of changes your designer committed to abstract inside VSCode",
+  "name": "notifeed",
+  "displayName": "NotiFeed (Abstract Notifications)",
+  "description": "Get notified of changes your designer committed to Abstract inside VSCode",
   "version": "0.1.0",
   "publisher": "yakirn",
   "repository": {
