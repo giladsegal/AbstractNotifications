@@ -19,6 +19,10 @@ export interface TreeData {
   commits: Entry[];
 }
 
+export interface ProjectChange {
+  projectName: string;
+}
+
 export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   extensionPath: string;
   dataService: DataService;
@@ -31,6 +35,11 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
   > = new vscode.EventEmitter<Entry>();
   readonly onDidChangeTreeData: vscode.Event<Entry> = this._onDidChangeTreeData
     .event;
+
+  private _onProjectChanged: vscode.EventEmitter<
+    ProjectChange
+  > = new vscode.EventEmitter<ProjectChange>();
+  onProjectChanged = this._onProjectChanged.event;
 
   constructor(context: vscode.ExtensionContext, accessToken: string) {
     this.extensionPath = context.extensionPath;
@@ -68,22 +77,11 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
     }
 
     if (!element) {
-      // const organizations = await this.dataService.getAllOrganizations();
-      // return organizations.map(this.oraganizationToEntry);
-      return this.currentTreeData!.organizations;
+      return this.currentTreeData.organizations;
     } else if (element.type === 'organization') {
-      // const projects = await this.dataService.getAllProjects();
-      // return projects.map(this.projectToEntry);
-      return this.currentTreeData!.projects;
+      return this.currentTreeData.projects;
     } else if (element.type === 'project') {
-      // const commits = await this.dataService.getAllCommits({
-      //   projectId: element.id,
-      //   branchId: 'master'
-      // });
-      // return commits
-      //   .filter(commit => commit.type === 'MERGE')
-      //   .map(this.commitToEntry);
-      return this.currentTreeData!.commits.filter(
+      return this.currentTreeData.commits.filter(
         commit => commit.obj.projectId === element.id
       );
     }
@@ -93,12 +91,39 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
 
   beginUpdating(): void {
     this.timer.run(async () => {
+      console.log('Checking for changes....');
       const newTreeData = await this.getTreeData();
 
       if (!deepEqual(this.currentTreeData, newTreeData, {strict: true})) {
+        // change that is not the initial fetch
+        if (this.currentTreeData && newTreeData) {
+          const currentProjects = this.currentTreeData.projects;
+          const newProjects = newTreeData.projects;
+
+          const currentProjectsWithChanges = currentProjects.filter(
+            currentProject =>
+              newProjects.some(
+                newProject =>
+                  newProject.id === currentProject.id &&
+                  currentProject.obj.pushedAt !== newProject.obj.pushedAt &&
+                  this.getProjectCommitCount(
+                    this.currentTreeData!,
+                    currentProject.id
+                  ) !== this.getProjectCommitCount(newTreeData, newProject.id)
+              )
+          );
+
+          console.log(`${currentProjectsWithChanges.length} projects changed!`);
+
+          currentProjectsWithChanges.forEach(p => {
+            this._onProjectChanged.fire({projectName: p.title});
+          });
+        }
+
         this.currentTreeData = newTreeData;
         this._onDidChangeTreeData.fire();
       }
+      console.log('going to sleep...');
     });
   }
   stopUpdating(): void {
@@ -126,6 +151,10 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
       projects: projects.map(this.projectToEntry),
       commits: commits.map(this.commitToEntry)
     };
+  };
+
+  private getProjectCommitCount = (treeData: TreeData, projectId: string) => {
+    return treeData.commits.filter(c => c.obj!.projectId === projectId).length;
   };
 
   private oraganizationToEntry = (organization: Organization): Entry => ({

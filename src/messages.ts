@@ -22,3 +22,7 @@ export const showTokenSavedMessage = () => {
 export const showTokenDeletedMessage = () => {
   vscode.window.showInformationMessage('Token deleted successfully');
 };
+
+export const showProjectChangedWarning = (projectName: string) => {
+  vscode.window.showWarningMessage(`${projectName} was updated!`);
+};

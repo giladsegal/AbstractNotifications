@@ -6,7 +6,11 @@ import {showAbstractFeedTree} from './AbstractFeedTree';
 import {FeedProvider} from './FeedProvider';
 import {registerCommands} from './commands';
 import {GlobalStateManager} from './globalState';
-import {showAccessTokenInputBox, showMissingTokenError} from './messages';
+import {
+  showAccessTokenInputBox,
+  showMissingTokenError,
+  showProjectChangedWarning
+} from './messages';
 
 let treeDataProvider: FeedProvider;
 let disposables: vscode.Disposable[] = [];
@@ -52,6 +56,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
   treeDataProvider = showAbstractFeedTree(context, accessToken!);
   treeDataProvider.beginUpdating();
+
+  treeDataProvider.onProjectChanged(({projectName}) => {
+    showProjectChangedWarning(projectName);
+  });
   // context.subscriptions.push(disposable);
 }
 
