@@ -62,24 +62,30 @@ export class FeedProvider implements vscode.TreeDataProvider<Entry> {
     return treeItem;
   }
 
-  async getChildren(
-    element?: Entry | undefined
-    // ): Promise<vscode.ProviderResult<Entry[]>> {
-  ): Promise<Entry[]> {
+  async getChildren(element?: Entry | undefined): Promise<Entry[]> {
+    if (!this.currentTreeData) {
+      this.currentTreeData = await this.getTreeData();
+    }
+
     if (!element) {
-      const organizations = await this.dataService.getAllOrganizations();
-      return organizations.map(this.oraganizationToEntry);
+      // const organizations = await this.dataService.getAllOrganizations();
+      // return organizations.map(this.oraganizationToEntry);
+      return this.currentTreeData!.organizations;
     } else if (element.type === 'organization') {
-      const projects = await this.dataService.getAllProjects();
-      return projects.map(this.projectToEntry);
+      // const projects = await this.dataService.getAllProjects();
+      // return projects.map(this.projectToEntry);
+      return this.currentTreeData!.projects;
     } else if (element.type === 'project') {
-      const commits = await this.dataService.getAllCommits({
-        projectId: element.id,
-        branchId: 'master'
-      });
-      return commits
-        .filter(commit => commit.type === 'MERGE')
-        .map(this.commitToEntry);
+      // const commits = await this.dataService.getAllCommits({
+      //   projectId: element.id,
+      //   branchId: 'master'
+      // });
+      // return commits
+      //   .filter(commit => commit.type === 'MERGE')
+      //   .map(this.commitToEntry);
+      return this.currentTreeData!.commits.filter(
+        commit => commit.obj.projectId === element.id
+      );
     }
 
     return [];
